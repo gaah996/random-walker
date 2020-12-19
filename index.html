@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Walker</title>
+  <style>
+    .row {
+      display: flex;
+    }
+    .row > div {
+      width: 3px;
+      height: 3px;
+      box-sizing: border-box;
+      background: white;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas"></div>
+  <script>
+    const cells = [];
+    const rows = 100;
+    const columns = 100;
+
+    function createCanvas (x, y) {
+      const canvas = document.querySelector('#canvas');
+      for (let i = 0; i < y; i++) {
+        const row = document.createElement('div');
+        row.classList = 'row';
+        canvas.appendChild(row);
+        for (let j = 0; j < x; j++) {
+          const cell = document.createElement('div');
+          cell.id=`cell-${i*x + j}`;
+          row.appendChild(cell);
+          cells.push({
+            row: i,
+            column: j,
+            walked: 200,
+            el: cell
+          });
+        }
+      }
+    }
+
+    function render(item) {
+      let value = Math.max(item.walked, 0);
+      item.el.style.background = `rgb(255, ${value}, 255)`;
+    }
+
+    function walk(x, y) {
+      cells.forEach(item => {
+        if(item.row == y && item.column == x) {
+          item.walked -= 10;
+          render(item);
+        }
+      })
+    }
+
+    createCanvas(columns,rows);
+    let x = rows / 2;
+    let y = columns / 2;
+    setInterval(() => {
+      walk(x,y);
+      
+      let randomNumberX = Math.random();
+      let randomNumberY = Math.random();
+      x = randomNumberX < 0.33 ? x+1 : randomNumberX > 0.66 ? x-1 : x;
+      y = randomNumberY < 0.33 ? y+1 : randomNumberY > 0.66 ? y-1 : y;
+
+      x = x > columns ? x - columns : x < 0 ? x + columns : x;
+      y = y > rows ? y - rows : y < 0 ? y + rows : y;
+    }, 1);
+  </script>
+</body>
+</html>
